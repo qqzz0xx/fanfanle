@@ -81,10 +81,10 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 24
+        "__id__": 25
       },
       {
-        "__id__": 25
+        "__id__": 26
       }
     ],
     "_prefab": null,
@@ -708,6 +708,9 @@
     "_components": [
       {
         "__id__": 22
+      },
+      {
+        "__id__": 24
       }
     ],
     "_prefab": null,
@@ -1055,6 +1058,19 @@
     "_componentId": "3b7545WiZFM6I0yAFvNb38G",
     "handler": "onStartGame",
     "customEventData": ""
+  },
+  {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 16
+    },
+    "_enabled": true,
+    "_defaultClip": null,
+    "_clips": [],
+    "playOnLoad": false,
+    "_id": "57rQNnk71DJ7p0pVoLp2LV"
   },
   {
     "__type__": "cc.Canvas",

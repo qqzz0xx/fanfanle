@@ -8,7 +8,9 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
+
+enum CardState{Front, InAction, Back}
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -20,64 +22,74 @@ export default class NewClass extends cc.Component {
     @property(cc.Node)
     EvCard = null;
 
-    status = 0;
+    status = CardState.Back;
 
     // LIFE-CYCLE CALLBACKS:
 
-     onLoad () {
+    onLoad() {
         this.Card.active = false;
         this.BackCard.active = true;
 
-        this.EvCard.on('mousedown', (ev)=>{
-            if (this.status == 0)
-            {
+        this.EvCard.on('mousedown', () => {
+            if (this.status == CardState.Back) {
                 this.onRotate();
             }
-            else if (this.status == 1)
-            {
+            else if (this.status == CardState.Front) {
                 this.onRotateToBack();
             }
         }, this);
-     }
+    }
 
-    
-     RotateAction() {
-       
+    RotateAction(dt: number) {
+        let action = cc.sequence(cc.hide(), cc.scaleTo(dt, 0, 1), cc.show(), cc.scaleTo(dt, 1, 1));
+        let actionBack = cc.sequence(cc.show(), cc.scaleTo(dt, 0, 1), cc.hide(), cc.scaleTo(dt, 1, 1));
+        return [action, actionBack];
+    }
 
-        let action = cc.sequence(cc.hide(), cc.scaleTo(0.5, 0, 1), cc.show(), cc.scaleTo(0.5, 1, 1));
-        let actionBack = cc.sequence(cc.show(), cc.scaleTo(0.5, 0, 1), cc.hide(), cc.scaleTo(0.5, 1, 1));
+    RotateToBackAction(dt: number) {
+
+        let actionBack = cc.sequence(cc.hide(), cc.scaleTo(dt, 0, 1), cc.show(), cc.scaleTo(dt, 1, 1));
+        let action = cc.sequence(cc.show(), cc.scaleTo(dt, 0, 1), cc.hide(), cc.scaleTo(dt, 1, 1));
         return [action, actionBack];
 
     }
 
-    RotateToBackAction() {
+    playCardAction(action, actionBack) {
+        return new Promise((resolve, reject) => {
+            this.Card.active = true;
+            this.BackCard.active = true;
+            let finishedCallback = cc.callFunc(() => {
+                resolve();
+            });
 
-        let actionBack = cc.sequence(cc.hide(), cc.scaleTo(0.5, 0, 1), cc.show(), cc.scaleTo(0.5, 1, 1));
-        let action = cc.sequence(cc.show(), cc.scaleTo(0.5, 0, 1), cc.hide(), cc.scaleTo(0.5, 1, 1));
-        return [action, actionBack];
+            this.Card.runAction(cc.sequence(action, finishedCallback));
+            this.BackCard.runAction(cc.sequence(actionBack, finishedCallback));
 
+        });
     }
 
-    onRotate() {
-        this.Card.active = true;
-        this.BackCard.active = true;
+    async onRotate() {
+        let a = this.RotateAction(0.3);
+        let p = this.playCardAction(a[0], a[1]);
+        this.status = CardState.InAction;
 
-        let a = this.RotateAction();
-        this.Card.runAction(a[0]);
-        this.BackCard.runAction(a[1]);
+        await p.then((result)=>{
+            return true;
+        });
 
-        this.status = 1;
+        this.status = CardState.Front;
     }
 
-    onRotateToBack() {
-        this.Card.active = true;
-        this.BackCard.active = true;
+    async onRotateToBack() {
+        let a = this.RotateToBackAction(0.3);
+        let p = this.playCardAction(a[0], a[1]);
+        this.status = CardState.InAction;
 
-        let a = this.RotateToBackAction();
-        this.Card.runAction(a[0]);
-        this.BackCard.runAction(a[1]);
+        await p.then((result)=>{
+            return true;
+        });
 
-        this.status = 0;
+        this.status = CardState.Back;
     }
 
     // update (dt) {}
