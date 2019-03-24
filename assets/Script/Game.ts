@@ -31,6 +31,7 @@ export default class Game extends cc.Component {
 
     async onStartGame() {
         await this.cardContainer.initCardList();
+        await this.cardContainer.rotateAllCard();
         this.isPlaying = true;
     }
 
@@ -38,8 +39,6 @@ export default class Game extends cc.Component {
 
         if (this.isPlaying)
         {
-
-
 
 
         }

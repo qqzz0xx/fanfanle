@@ -46,14 +46,17 @@ export default class NewClass extends cc.Component {
             });
 
             this.layout.node.removeAllChildren();
+            this.cardList = [];
             this.node.runAction(cc.sequence(action, callback));
         });
 
         await p.then(()=>{
             return true;
         });
+    }
 
-        for (let index = 0; index < this.cardList.length; index++) {
+    async rotateAllCard() {
+        for (let index = 0; this.cardList != null && index < this.cardList.length; index++) {
             const element = this.cardList[index];
             await element.onRotate();
             await functions.delay(300);
