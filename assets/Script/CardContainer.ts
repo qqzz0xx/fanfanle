@@ -74,4 +74,10 @@ export default class NewClass extends cc.Component {
         this.cardList.push(card);
     }
 
+    enabledCardListener() {
+        for (let index = 0; this.cardList != null && index < this.cardList.length; index++) {
+            const element = this.cardList[index];
+        }
+    }
+
 }

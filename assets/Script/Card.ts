@@ -1,16 +1,8 @@
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+import Game from "./Game";
 
 const { ccclass, property } = cc._decorator;
 
-enum CardState{Front, InAction, Back}
+export enum CardState{Front, InAction, Back}
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -29,8 +21,21 @@ export default class NewClass extends cc.Component {
     onLoad() {
         this.Card.active = false;
         this.BackCard.active = true;
+    }
 
+    addListener() {
         this.EvCard.on('mousedown', () => {
+            if (this.status == CardState.Back) {
+                this.onRotate();
+            }
+            else if (this.status == CardState.Front) {
+                this.onRotateToBack();
+            }
+        }, this);
+    }
+
+    removeListener() {
+        this.EvCard.off('mousedown', () => {
             if (this.status == CardState.Back) {
                 this.onRotate();
             }

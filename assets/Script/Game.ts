@@ -18,6 +18,8 @@ export default class Game extends cc.Component {
 
     isPlaying = false;
 
+    canFanPaiNum = 3;
+
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
