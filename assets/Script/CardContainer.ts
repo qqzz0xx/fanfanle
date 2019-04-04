@@ -9,7 +9,8 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import Card from "./Card"
-import functions from "./functions"
+import { delay } from "./functions";
+ "./functions"
 
 const { ccclass, property } = cc._decorator;
 
@@ -59,7 +60,7 @@ export default class NewClass extends cc.Component {
         for (let index = 0; this.cardList != null && index < this.cardList.length; index++) {
             const element = this.cardList[index];
             await element.onRotate();
-            await functions.delay(300);
+            await delay(300);
             await element.onRotateToBack();
         }
     }

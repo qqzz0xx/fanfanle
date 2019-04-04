@@ -8,11 +8,13 @@ export enum CardState{Front, InAction, Back}
 export default class NewClass extends cc.Component {
 
     @property(cc.Node)
-    BackCard = null;
+    BackCard: cc.Node = null;
+
     @property(cc.Node)
-    Card = null;
+    Card: cc.Node = null;
+
     @property(cc.Node)
-    EvCard = null;
+    EvCard: cc.Node = null;
 
     status = CardState.Back;
 
@@ -21,6 +23,8 @@ export default class NewClass extends cc.Component {
     onLoad() {
         this.Card.active = false;
         this.BackCard.active = true;
+
+  
     }
 
     addListener() {

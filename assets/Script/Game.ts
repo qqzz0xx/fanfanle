@@ -1,4 +1,6 @@
 import CardContainer from "./CardContainer"
+import { gameCtrl } from "./GameController";
+import { loadResAsync } from "./functions"
 
 const {ccclass, property} = cc._decorator;
 
@@ -28,7 +30,9 @@ export default class Game extends cc.Component {
     }
 
     start () {
+        gameCtrl.genInitData();
 
+        loadResAsync
     }
 
     async onStartGame() {
