@@ -1,4 +1,6 @@
 import Game from "./Game";
+import { CardModel } from "./GameController";
+import { loadResAsync } from "./functions";
 
 const { ccclass, property } = cc._decorator;
 
@@ -16,43 +18,64 @@ export default class NewClass extends cc.Component {
     @property(cc.Node)
     EvCard: cc.Node = null;
 
+    index: number;
+
+    model: CardModel = null;
+
     status = CardState.Back;
+
+    game: Game = null;
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
         this.Card.active = false;
         this.BackCard.active = true;
+    }
 
-  
+    start() {
+        this.game = window.game;
+    }
+
+    async setModel(index: number, model: CardModel) {
+        this.index = index;
+        this.model = model;
+
+
+        let label = this.Card.getComponentInChildren(cc.Label);
+        label.string = model.num + "," + model.type;
+        label.node.color = cc.Color.RED;
+
+        // let p = loadResAsync<cc.SpriteFrame>( "1" );
+
+        // await p.then((res)=>{
+        //     this.Card.getComponent(cc.Sprite).spriteFrame = res;
+        // });
     }
 
     addListener() {
-        this.EvCard.on('mousedown', () => {
-            if (this.status == CardState.Back) {
-                this.onRotate();
-            }
-            else if (this.status == CardState.Front) {
-                this.onRotateToBack();
-            }
-        }, this);
+        this.EvCard.on('mousedown', this.onClickCard, this);
     }
 
     removeListener() {
-        this.EvCard.off('mousedown', () => {
-            if (this.status == CardState.Back) {
-                this.onRotate();
-            }
-            else if (this.status == CardState.Front) {
-                this.onRotateToBack();
-            }
-        }, this);
+        this.EvCard.off('mousedown',  this.onClickCard, this);
+    }
+
+    onClickCard() {
+        if (this.status == CardState.Back) {
+            this.onRotate(0.1);
+        }
+        else if (this.status == CardState.Front) {
+            this.onRotateToBack(0.1);
+        }
     }
 
     RotateAction(dt: number) {
+
         let action = cc.sequence(cc.hide(), cc.scaleTo(dt, 0, 1), cc.show(), cc.scaleTo(dt, 1, 1));
         let actionBack = cc.sequence(cc.show(), cc.scaleTo(dt, 0, 1), cc.hide(), cc.scaleTo(dt, 1, 1));
         return [action, actionBack];
+        
     }
 
     RotateToBackAction(dt: number) {
@@ -77,8 +100,8 @@ export default class NewClass extends cc.Component {
         });
     }
 
-    async onRotate() {
-        let a = this.RotateAction(0.3);
+    async onRotate(dt) {
+        let a = this.RotateAction(dt);
         let p = this.playCardAction(a[0], a[1]);
         this.status = CardState.InAction;
 
@@ -87,10 +110,12 @@ export default class NewClass extends cc.Component {
         });
 
         this.status = CardState.Front;
+
+        this.game.onRotateCard(this);
     }
 
-    async onRotateToBack() {
-        let a = this.RotateToBackAction(0.3);
+    async onRotateToBack(dt) {
+        let a = this.RotateToBackAction(dt);
         let p = this.playCardAction(a[0], a[1]);
         this.status = CardState.InAction;
 

@@ -63,10 +63,37 @@ class GameController {
 
         }
 
+        return this.cardData;
+
     }
 
+    getBackCardIndexs() {
+        let indexes = [];
+        for (let index = 0; index < this.cardData.length; index++) {
+            const element = this.cardData[index];
+            if (element.state == CardState.Back) {
+                indexes.push(index);
+            }
+        }
+
+        return indexes;
+    }
+
+    checkTheSame(indexes: Array<number>) {
+        if (indexes.length <= 0) return;
+        let t = this.cardData[indexes[0]]
+        for (let index = 1; index < indexes.length; index++) {
+            const element = indexes[index];
+            let data = this.cardData[element]
+            if (!data.isEqual(t)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 const gameCtrl = new GameController();
 window.gameCtrl = gameCtrl;
 
-export { gameCtrl }
+export { gameCtrl, CardModel }
